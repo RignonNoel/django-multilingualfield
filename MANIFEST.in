@@ -3,4 +3,6 @@ include multilingualfield/VERSION
 include README.rst
 include tests.py
 include LICENSE
+include multilingualfield/static/multilingualfield.*
+include multilingualfield/templates/multilingualfield/*
 recursive-exclude multilingualfield *.pyc
