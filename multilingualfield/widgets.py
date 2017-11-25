@@ -1,6 +1,6 @@
 from django.forms import Textarea
 from django import forms
-from django.utils import simplejson as json
+import simplejson as json
 from django.conf import settings
 from django.template import loader, Context
 from django.template.loader import render_to_string
