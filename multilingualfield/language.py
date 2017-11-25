@@ -8,13 +8,15 @@ from django.utils.translation import ugettext_lazy as _, get_language
 try:
     import json
 except ImportError:
-    from django.utils import simplejson as json
+    import simplejson as json
+
 
 def get_base_language(lang):
     if '-' in lang:
         return lang.split('-')[0]
     return lang
     
+
 def get_current_language(base=True):
     l = get_language()
     if base:
@@ -23,9 +25,9 @@ def get_current_language(base=True):
     
 
 class LanguageText(object):
-    '''
-        Store text with language code in JSON format
-    '''
+    """
+    Store text with language code in JSON format
+    """
     values = {}
     default_language = None
     max_length = -1
@@ -35,26 +37,26 @@ class LanguageText(object):
         self.default_language = default_language
         self.values = {}
         if value is not None:
-            self.value(value,language)
+            self.value(value, language)
             
     def __call__(self, value=None, language=None):
-        self.value(value,language)
+        self.value(value, language)
         return self
             
     def get_available_language(self):
         return self.values.keys()
-    
+
     def get_current_language(self, base=False):
         return get_current_language(base)
     
     def remove_language(self, lang):
         try:
             return self.values.pop(lang)
-        except:
+        except Exception:
             pass
     
     def has_language(self, lang):
-        return self.values.has_key(lang)
+        return lang in self.values
             
     def get(self, language=None, fallback=True):
         if language is None:
@@ -73,14 +75,14 @@ class LanguageText(object):
         try:
             first_lang = self.values.keys()[0]
             return self.values[first_lang]
-        except:
+        except Exception:
             pass
         return None
     
     def value(self, value=None, language=None):
-        if value is None:   #Get value
+        if value is None:  # Get value
             return self.get(language)
-        else: #Set value
+        else:  # Set value
             if language is None:
                 language = get_current_language(False)
             if self.max_length != -1:

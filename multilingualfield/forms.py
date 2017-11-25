@@ -5,6 +5,7 @@ from django.utils import six
 from .widgets import MLTextWidget
 from .language import LanguageText
 
+
 class MLTextFormField(forms.CharField):
 
     def __init__(self, *args, **kwargs):
@@ -24,9 +25,9 @@ class MLTextFormField(forms.CharField):
                 return Lang
             except ValueError:
                 try:
-                    Lang = LanguageText(value,language=None)
+                    Lang = LanguageText(value, language=None)
                     return Lang
-                except: #Look like there will be no error, is it good?
+                except Exception:  # Look like there will be no error, is it good?
                     raise forms.ValidationError(
                         'JSON decode error: %s' % (unicode(exc),)
                     )

@@ -14,4 +14,3 @@ if 'filer' in settings.INSTALLED_APPS:
 CKEDITOR_FILER = False    
 if CKEDITOR_FILERBROWSER and FILER_INSTALLED:
     CKEDITOR_FILER = True
-    

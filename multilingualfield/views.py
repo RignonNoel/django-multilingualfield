@@ -1,9 +1,6 @@
-from django.http import HttpResponse, Http404
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from multilingualfield import settings as ml_settings
 
-import json
 
 def admin_required(orig_view_fn):
     def wrapped_view(request, *args, **kwargs):
@@ -11,10 +8,11 @@ def admin_required(orig_view_fn):
             return orig_view_fn(request, *args, **kwargs)
         return redirect('/')
     return wrapped_view
-    
+
+
 @admin_required
 def ckfiler(request):
-    CKEditorFuncNum  = request.GET.get('CKEditorFuncNum')
+    CKEditorFuncNum = request.GET.get('CKEditorFuncNum')
     CKEditor = request.GET.get('CKEditor')
     langCode = request.GET.get('langCode','en')
     filetype = request.GET.get('type')
