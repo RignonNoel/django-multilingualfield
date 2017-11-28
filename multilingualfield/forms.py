@@ -12,8 +12,13 @@ class MLTextFormField(forms.CharField):
         if 'widget' not in kwargs:
             kwargs['widget'] = MLTextWidget
         super(MLTextFormField, self).__init__(*args, **kwargs)
-        
+
     def clean(self, value):
+        """
+        Try to get JSON format of the value
+        :param value: The value we want to clean
+        :return: The best format of value available
+        """
         value = super(MLTextFormField, self).clean(value)
         if not value:
             return value

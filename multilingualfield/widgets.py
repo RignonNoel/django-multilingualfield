@@ -13,15 +13,23 @@ DEFAULT_CKCONFIG = dict()
 
 
 class MLTextWidget(Textarea):
+    """
+    Widget used to display a multi-language field
+    """
     HTML = False
-    
+
     def __init__(self, html=False, *args, **kwargs):
         self.HTML = html
-        
+
         super(MLTextWidget, self).__init__(*args, **kwargs)
-      
+
     @property
     def media(self):
+        """
+        Define all media needed by the widget to be operational
+        :return: a forms.Media instance with all CSS and JS script needed
+        """
+        # Javascript
         js = [
             'multiligualfield/js/jquery-1.10.2.min.js',
             'multiligualfield/js/jquery-ui-1.10.3.custom.min.js',
@@ -29,12 +37,23 @@ class MLTextWidget(Textarea):
         ]
         if self.HTML:
             js += ['multiligualfield/ckeditor/ckeditor.js']
+
+        # Cascading Style Sheets
         css = ['multiligualfield/css/ui-darkness/jquery-ui-1.10.3.custom.min.css']
+
         return forms.Media(js=js, css={'all': css})
-        
+
     def render(self, name, value, attrs=None):
+        """
+        Render the template widget
+        :param name: The name of the field we want to display
+        :param value: The actual value of the field we want to display
+        :param attrs:
+        :return: A template of widget initialized
+        """
         is_valid = False
-        if value is None or value == '': # New create or edit none
+        if value is None or value == '':
+            # New create or edit none
             ml_json = '{}'
             ml_language = '[]'
             is_valid = True
@@ -49,18 +68,22 @@ class MLTextWidget(Textarea):
         if is_valid:
             Langs = json.dumps(dict(settings.LANGUAGES))
             if self.HTML:
-                widgettmpl = "multilingualfield/MLHTMLWidget.html"
+                widget_template = "multilingualfield/MLHTMLWidget.html"
             else:
-                widgettmpl = "multilingualfield/MLTextWidget.html"
-            return mark_safe(render_to_string(widgettmpl, {
-                "name": name,
-                "raw": value,
-                "ml_json": ml_json,
-                "ml_language": ml_language,
-                "langs": Langs,
-                "langsobj": settings.LANGUAGES,
-                'current_language': translation.get_language(),
-                'CKEDITOR_FILER': ml_settings.CKEDITOR_FILER,
-                'CKEDITOR_BROWSER_URL': ml_settings.CKEDITOR_BROWSER_URL
-            }))
+                widget_template = "multilingualfield/MLTextWidget.html"
+            return mark_safe(render_to_string(
+                widget_template,
+                {
+                    "name": name,
+                    "raw": value,
+                    "ml_json": ml_json,  # Content JSON
+                    "ml_language": ml_language,  # Available languages
+                    "langs": Langs,
+                    "langsobj": settings.LANGUAGES,
+                    'current_language': translation.get_language(),
+                    'CKEDITOR_FILER': ml_settings.CKEDITOR_FILER,
+                    'CKEDITOR_BROWSER_URL': ml_settings.CKEDITOR_BROWSER_URL
+                }
+            ))
+
         return "Invalid data '%s'" % value

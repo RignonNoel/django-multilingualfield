@@ -1,45 +1,24 @@
-<br/><br/>
 <div>
-    <div id="language_widget_{{name}}">
-        <ul>
-            {% for l in langsobj %}
-                <li><a href="#tabs-{{name}}-{{l.0}}" data-lang="{{l.0}}">{{l.1}}</a></li>
-            {% endfor %}
-        </ul>
-        {% for l in langsobj %}
-        <div id="tabs-{{name}}-{{l.0}}" data-lang="{{l.0}}">
-            <textarea id="language_widget_{{name}}_html_{{l.0}}" class="language_html ck_{{name}}" rows="4" cols="20" style="width:100%" data-lang="{{l.0}}"></textarea>
-        </div>
-        {% endfor %}
-    </div>
-    <textarea id="id_{{name}}" name="{{name}}" style="display:none"></textarea>
+    <input type="text"
+           id="language_widget_{{name}}_input"
+           class="language_html ck_{{name}}"
+           value="{{ ml_json }}" />
+    <input type="text" id="id_{{name}}" name="{{name}}" style="display:none" />
 </div>
 
 <script>
     $(function(){
-        var ml_{{name}}_data = {{ml_json|safe}};
-        var ml_{{name}}_language = {{ml_language|safe}};
-        var ml_all_langs = {{langs|safe}};
-        
-        $( "#language_widget_{{name}}" ).tabs();
-        var act_lang = $('#language_widget_{{name}} a[href="#tabs-{{name}}-{{current_language}}"]').parent().index();
-        $('#language_widget_{{name}}').tabs("option", "active", act_lang);
-        
-        for(i in ml_{{name}}_language){
-            var l = ml_{{name}}_language[i];
-            if(l in ml_all_langs){
-                $('#language_widget_{{name}} textarea[data-lang="'+l+'"]').val(ml_{{name}}_data[l]);
+        var ml_{{ name }}_data = {{ ml_json|safe }};
+        var ml_{{ name }}_language = {{ ml_language|safe }};
+        var ml_all_langs = {{ langs|safe }};
+
+        $('#language_widget_{{name}}_input').val(ml_{{name}}_data["{{ current_language }}"]);
+
+        $('#language_widget_{{name}}_input').change(function(){
+            if( $('#language_widget_{{name}}_input').val() != "" ) {
+                ml_{{ name }}_data['{{ current_language }}'] = $('#language_widget_{{name}}_input').val();
             }
-        }
-        
-        $('#language_widget_{{name}} textarea.language_text').change(function(){
-            var submit = {};
-            $('#language_widget_{{name}} textarea.language_text').each(function(){
-                if($(this).val() != ""){
-                    submit[$(this).data('lang')] = $(this).val();
-                }
-            });
-            $('#id_{{name}}').val(JSON.stringify(submit));
+            $('#id_{{name}}').val(JSON.stringify(ml_{{ name }}_data));
         });
         $('#id_{{name}}').val(JSON.stringify(ml_{{name}}_data));
     });

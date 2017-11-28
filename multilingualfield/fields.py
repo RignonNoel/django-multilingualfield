@@ -16,22 +16,30 @@ from .widgets import MLTextWidget
 
 
 def get_base_language(lang):
+    """
+    Get the base language of language code (ex: 'fr-ca' -> 'fr')
+    :param lang: The language code
+    :return: The base language of the language code
+    """
     if '-' in lang:
         return lang.split('-')[0]
     return lang
 
 
-def get_current_language(base=True):
-    l = get_language()
-    if base:
-        return get_base_language(l)
-    return l
+def get_current_language():
+    """
+    Find the current language used by the platform
+    :return: The current language used by the platform
+    """
+    language = get_language()
+    return get_base_language(language)
     
 
 class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
     """
     A field that support multilingual text for your model
     """
+
     __metaclass__ = models.SubfieldBase
     
     default_error_messages = {
@@ -46,6 +54,11 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
         super(MLTextField, self).__init__(*args, **kwargs)        
     
     def get_prep_value(self, value):
+        """
+        Prepare the value to be store in database
+        :param value: The value we want to store
+        :return: `None` or a dumps of JSON
+        """
         if value is None:
             if not self.null and self.blank:
                 return ""
@@ -67,6 +80,12 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
         return self.get_prep_value(value)
         
     def validate(self, value, model_instance):
+        """
+        Validate the field value
+        :param value: The value of the field
+        :param model_instance:
+        :return: Nothing, just raise some type of error
+        """
         if not self.null and value is None:
             raise ValidationError(self.error_messages['null'])
         try:
@@ -75,9 +94,18 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
             raise ValidationError(self.error_messages['invalid'] % value)
 
     def get_internal_type(self):
+        """
+        Get internal type
+        :return: A string who represent the internal type
+        """
         return 'TextField'
     
     def db_type(self, connection):
+        """
+        Get database type
+        :param connection:
+        :return: A string who represent the database type used to store the value
+        """
         return 'text'
         
     def to_python(self, value):

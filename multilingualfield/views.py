@@ -14,7 +14,7 @@ def admin_required(orig_view_fn):
 def ckfiler(request):
     CKEditorFuncNum = request.GET.get('CKEditorFuncNum')
     CKEditor = request.GET.get('CKEditor')
-    langCode = request.GET.get('langCode','en')
+    langCode = request.GET.get('langCode', 'en')
     filetype = request.GET.get('type')
     CKEDITOR_FILER_FILEBROWSER_URL = ml_settings.CKEDITOR_FILER_FILEBROWSER_URL
     CKEDITOR_FILER_FILEBROWSER_GET = ml_settings.CKEDITOR_FILER_FILEBROWSER_GET

@@ -3,13 +3,23 @@
 <div>
     <div id="language_widget_{{name}}">
         <ul>
-            {% for l in langsobj %}
-                <li><a href="#tabs-{{name}}-{{l.0}}" data-lang="{{l.0}}">{{l.1}}</a></li>
+            {% for language in langsobj %}
+                <li>
+                    <a href="#tabs-{{name}}-{{language.0}}" data-lang="{{language.0}}">
+                        {{language.1}}
+                    </a>
+                </li>
             {% endfor %}
         </ul>
-        {% for l in langsobj %}
-        <div id="tabs-{{name}}-{{l.0}}" data-lang="{{l.0}}">
-            <textarea id="language_widget_{{name}}_html_{{l.0}}" class="language_html ck_{{name}}" rows="4" cols="20" style="width:100%" data-lang="{{l.0}}"></textarea>
+        {% for language in langsobj %}
+        <div id="tabs-{{name}}-{{language.0}}" data-lang="{{language.0}}">
+            <textarea id="language_widget_{{name}}_html_{{language.0}}"
+                      class="language_html ck_{{name}}"
+                      rows="4"
+                      cols="20"
+                      style="width:100%"
+                      data-lang="{{language.0}}">
+            </textarea>
         </div>
         {% endfor %}
     </div>
