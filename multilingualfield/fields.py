@@ -106,7 +106,10 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
         :param connection:
         :return: A string who represent the database type used to store the value
         """
-        return 'text'
+        if self.lt_max_length > 0:
+            return 'char(%s)' % self.lt_max_length
+        else:
+            return 'text'
         
     def to_python(self, value):
         if isinstance(value, six.string_types):
