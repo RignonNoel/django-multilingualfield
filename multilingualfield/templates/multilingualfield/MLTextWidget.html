@@ -1,9 +1,9 @@
 <div>
     <input type="text"
-           id="language_widget_{{name}}_input"
+           id="language_widget_{{id}}_input"
            class="language_html ck_{{name}}"
            value="{{ ml_json }}" />
-    <input type="text" id="id_{{name}}" name="{{name}}" style="display:none" />
+    <input type="text" id="id_{{id}}" name="{{name}}" style="display:none" />
 </div>
 
 <script>
@@ -12,14 +12,23 @@
         var ml_{{ name }}_language = {{ ml_language|safe }};
         var ml_all_langs = {{ langs|safe }};
 
-        $('#language_widget_{{name}}_input').val(ml_{{name}}_data["{{ current_language }}"]);
+        if( '{{raw}}' != 'None' ) {
+            var default_value = '{{raw}}';
+        }
+        else {
+            var default_value = '';
+        }
 
-        $('#language_widget_{{name}}_input').change(function(){
-            if( $('#language_widget_{{name}}_input').val() != "" ) {
-                ml_{{ name }}_data['{{ current_language }}'] = $('#language_widget_{{name}}_input').val();
+        $('#language_widget_{{id}}_input').val(default_value);
+
+        $('#language_widget_{{id}}_input').change(function(){
+            if( $('#language_widget_{{id}}_input').val() != "" ) {
+                ml_{{ name }}_data['{{ current_language }}'] = $('#language_widget_{{id}}_input').val();
             }
-            $('#id_{{name}}').val(JSON.stringify(ml_{{ name }}_data));
+            $('#id_{{id}}').val(JSON.stringify(ml_{{ name }}_data));
         });
-        $('#id_{{name}}').val(JSON.stringify(ml_{{name}}_data));
+
+        // Init display with a value decided by the Language package
+        $('#id_{{id}}').val(JSON.stringify(default_value));
     });
 </script>

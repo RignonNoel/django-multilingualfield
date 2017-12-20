@@ -74,6 +74,7 @@ class MLTextWidget(Textarea):
             return mark_safe(render_to_string(
                 widget_template,
                 {
+                    "id": id(self),
                     "name": name,
                     "raw": value,
                     "ml_json": ml_json,  # Content JSON

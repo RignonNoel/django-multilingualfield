@@ -1,9 +1,9 @@
 <div>
-    <textarea id="language_widget_{{name}}_textarea" class="language_html ck_{{name}}">
+    <textarea id="language_widget_{{id}}_textarea" class="language_html ck_{{name}}">
         {{ ml_json }}
     </textarea>
 
-    <textarea id="id_{{name}}" name="{{name}}" style="display:none">
+    <textarea id="id_{{id}}" name="{{name}}" style="display:none">
     </textarea>
 </div>
 
@@ -13,14 +13,14 @@
         var ml_{{ name }}_language = {{ ml_language|safe }};
         var ml_all_langs = {{ langs|safe }};
 
-        $('#language_widget_{{name}}_textarea').val(ml_{{name}}_data["{{ current_language }}"]);
+        $('#language_widget_{{id}}_textarea').val(ml_{{name}}_data["{{ current_language }}"]);
 
-        $('#language_widget_{{name}}_textarea').change(function(){
-            if( $('#language_widget_{{name}}_textarea').val() != "" ) {
-                ml_{{ name }}_data['{{ current_language }}'] = $('#language_widget_{{name}}_textarea').val();
+        $('#language_widget_{{id}}_textarea').change(function(){
+            if( $('#language_widget_{{id}}_textarea').val() != "" ) {
+                ml_{{ name }}_data['{{ current_language }}'] = $('#language_widget_{{id}}_textarea').val();
             }
-            $('#id_{{name}}').val(JSON.stringify(ml_{{ name }}_data));
+            $('#id_{{id}}').val(JSON.stringify(ml_{{ name }}_data));
         });
-        $('#id_{{name}}').val(JSON.stringify(ml_{{name}}_data));
+        $('#id_{{id}}').val(JSON.stringify(ml_{{name}}_data));
     });
 </script>

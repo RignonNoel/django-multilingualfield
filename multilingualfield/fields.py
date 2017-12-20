@@ -9,7 +9,7 @@ try:
     import json
 except ImportError:
     from django.utils import simplejson as json
-    
+
 from .language import LanguageText
 from .forms import MLTextFormField
 from .widgets import MLTextWidget
@@ -33,7 +33,7 @@ def get_current_language():
     """
     language = get_language()
     return get_base_language(language)
-    
+
 
 class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
     """
@@ -41,18 +41,22 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
     """
 
     __metaclass__ = models.SubfieldBase
-    
+
     default_error_messages = {
         'invalid': _("'%s' is not a valid JSON string.")
     }
-    
+
     description = "Multilingual Text Field"
-    
+
     def __init__(self, *args, **kwargs):
+        # Keep the default value and force default=None to respect DB limitation on text/BLOB
+        self.default_value = kwargs.get('default')
+        kwargs['default'] = None
+
         self.lt_max_length = kwargs.pop('max_length', -1)
         self.default_language = kwargs.get('default_language', get_current_language())
-        super(MLTextField, self).__init__(*args, **kwargs)        
-    
+        super(MLTextField, self).__init__(*args, **kwargs)
+
     def get_prep_value(self, value):
         """
         Prepare the value to be store in database
@@ -61,7 +65,10 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
         """
         if value is None:
             if not self.null and self.blank:
-                return ""
+                if self.default_value:
+                    return self.default_value
+                else:
+                    return ""
             return None
         if isinstance(value, six.string_types):
             value = LanguageText(
@@ -75,10 +82,10 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
             value.default_language = self.default_language
             return json.dumps(value.values)
         return None
-        
+
     def get_db_prep_value(self, value, connection=None, prepared=None):
         return self.get_prep_value(value)
-        
+
     def validate(self, value, model_instance):
         """
         Validate the field value
@@ -99,7 +106,7 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
         :return: A string who represent the internal type
         """
         return 'TextField'
-    
+
     def db_type(self, connection):
         """
         Get database type
@@ -110,7 +117,7 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
             return 'char(%s)' % self.lt_max_length
         else:
             return 'text'
-        
+
     def to_python(self, value):
         if isinstance(value, six.string_types):
             if value == "" or value is None:
@@ -148,7 +155,12 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
 
         if isinstance(value, LanguageText):
             return value
-        return None
+        return LanguageText(
+            "",
+            language=None,
+            max_length=self.lt_max_length,
+            default_language=self.default_language
+        )  # a A blank LanguageText object
 
     def get_prep_lookup(self, lookup_type, value):
         if lookup_type in ["exact", "iexact"]:
@@ -168,7 +180,7 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
                 return self.get_prep_value(value)[1:-1]
             return self.to_python(self.get_prep_value(value))
         raise TypeError('Lookup type %r not supported' % lookup_type)
-    
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': MLTextFormField,
@@ -176,7 +188,7 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
         }
         defaults.update(**kwargs)
         return super(MLTextField, self).formfield(**defaults)
-        
+
     def value_to_string(self, obj):
         return self._get_val_from_obj(obj)
 
@@ -193,6 +205,7 @@ class MLHTMLField(MLTextField):
 
 try:
     from south.modelsinspector import add_introspection_rules
+
     add_introspection_rules([], ['^multilingualfield\.fields\.MLTextField'])
     add_introspection_rules([], ['^multilingualfield\.fields\.MLHTMLField'])
 except ImportError:
