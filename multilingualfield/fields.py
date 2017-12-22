@@ -184,8 +184,14 @@ class MLTextField(six.with_metaclass(models.SubfieldBase, models.Field)):
     def formfield(self, **kwargs):
         defaults = {
             'form_class': MLTextFormField,
-            'widget': MLTextWidget
         }
+
+        if self.lt_max_length == -1:
+            # If we don't have max_length, it's a textare
+            defaults['widget'] = MLTextWidget(textarea=True)
+        else:
+            defaults['widget'] = MLTextWidget
+
         defaults.update(**kwargs)
         return super(MLTextField, self).formfield(**defaults)
 

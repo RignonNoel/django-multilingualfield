@@ -1,0 +1,35 @@
+<div>
+    <textarea id="language_widget_{{id}}_input"
+              class="language_html ck_{{name}}"
+              style="width:100%; height: 200px;">
+        {{ ml_json }}
+    </textarea>
+    <textarea id="id_{{id}}" name="{{name}}" style="display:none"></textarea>
+</div>
+
+<script>
+    $(function(){
+        var ml_{{ name }}_data = {{ ml_json|safe }};
+        var ml_{{ name }}_language = {{ ml_language|safe }};
+        var ml_all_langs = {{ langs|safe }};
+
+        if( `{{raw}}` != 'None' ) {
+            var default_value = `{{raw}}`;
+        }
+        else {
+            var default_value = '';
+        }
+
+        $('#language_widget_{{id}}_input').val(default_value);
+
+        $('#language_widget_{{id}}_input').change(function(){
+            if( $('#language_widget_{{id}}_input').val() != "" ) {
+                ml_{{ name }}_data['{{ current_language }}'] = $('#language_widget_{{id}}_input').val();
+            }
+            $('#id_{{id}}').val(JSON.stringify(ml_{{ name }}_data));
+        });
+
+        // Init display with a value decided by the Language package
+        $('#id_{{id}}').val(JSON.stringify(default_value));
+    });
+</script>

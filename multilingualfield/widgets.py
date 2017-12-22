@@ -18,8 +18,9 @@ class MLTextWidget(Textarea):
     """
     HTML = False
 
-    def __init__(self, html=False, *args, **kwargs):
+    def __init__(self, html=False, textarea=False, *args, **kwargs):
         self.HTML = html
+        self.textarea = textarea
 
         super(MLTextWidget, self).__init__(*args, **kwargs)
 
@@ -51,6 +52,9 @@ class MLTextWidget(Textarea):
         :param attrs:
         :return: A template of widget initialized
         """
+
+        print(value)
+        print(type(value))
         is_valid = False
         if value is None or value == '':
             # New create or edit none
@@ -69,6 +73,8 @@ class MLTextWidget(Textarea):
             Langs = json.dumps(dict(settings.LANGUAGES))
             if self.HTML:
                 widget_template = "multilingualfield/MLHTMLWidget.html"
+            if self.textarea:
+                widget_template = "multilingualfield/MLTextareaWidget.html"
             else:
                 widget_template = "multilingualfield/MLTextWidget.html"
             return mark_safe(render_to_string(
