@@ -53,22 +53,28 @@ class MLTextWidget(Textarea):
         :return: A template of widget initialized
         """
 
-        print(value)
-        print(type(value))
         is_valid = False
         if value is None or value == '':
             # New create or edit none
             ml_json = '{}'
             ml_language = '[]'
             is_valid = True
+        if isinstance(value, six.string_types):
+            try:
+                valuejson = json.loads(value)
+                Lang = LanguageText()
+                Lang.values = valuejson
+                value = Lang
+            except ValueError:
+                try:
+                    Lang = LanguageText(value, language=None)
+                    value = Lang
+                except Exception:
+                    pass
         if isinstance(value, LanguageText):
             ml_json = json.dumps(value.values)
             ml_language = json.dumps(value.get_available_language())
             is_valid = True
-        if isinstance(value, six.string_types):  # Debug :(
-            print "Why string here ==================="
-            print value
-            print "===============================Why?"
         if is_valid:
             Langs = json.dumps(dict(settings.LANGUAGES))
             if self.HTML:
